@@ -1,11 +1,10 @@
-# yerinaGit
-##Unit Test Library
+# Unit Test Library
 
-##1. Nimble
+## 1. Nimble
 Nimble: "재빠른"
 Error document화
 
-#특징 및 장점
+특징 및 장점
 1. XCTAssert 와는 달리 매번 사용자 임의 실패 메시지를 지정할 필요가 없다 
  
 XCTAssert에서 실패 메세지를 작성해주지 않으면,
@@ -44,4 +43,4 @@ func testExample() throws {
 🚀 timeout 테스트
 
 
-##2. Quick
+## 2. Quick
