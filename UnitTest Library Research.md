@@ -92,7 +92,9 @@ Given = describe
                 myModule = Converter()
             }
  `
+
 When - context
+
 
 `
             context("텍스트필드에 입력되면, convert된다") { // When
@@ -105,8 +107,7 @@ When - context
 Then - it
 
 `
-
-                it("값이 잘 변환되었는지 테스트") { // Then
-                    expect(myModule.result).to(equal("****"))
-                }
+ it("값이 잘 변환되었는지 테스트") { // Then
+   expect(myModule.result).to(equal("****"))
+  }
 `
