@@ -1,7 +1,7 @@
 # yerinaGit
 Unit Test Library
 
-2. Nimble
+1. Nimble
 Nimble: "재빠른"
 Error document화
 
@@ -18,8 +18,6 @@ XCTAssertTrue(contains(sillyMonkeys, kiki))
 XCTAssertTrue(contains(sillyMonkeys, kiki), "Expected sillyMonkeys to contain 'Kiki'")
 '''
 테스트 실패 결과 - "Expected sillyMonkeys to contain 'Kiki'"
-
-Nimble을 사용하면 이렇게 수동으로 실패 메세지를 작성해주지 않아도 된다..! (작성해보면 이것도 꽤 시간이 많이 드는 일임을, 실수할 수 도 있는 일임을 알게 된다) 그리고 Nimble은 더 읽기 쉬운 실패 메세지를 제공해준다 감동적..🥺
  
 '''
 expect(sillyMonkeys).to(contain(kiki))
@@ -42,3 +40,5 @@ func testExample() throws {
 - true / false - nil 테스트
 - timeout 테스트
 
+
+2. Quick
