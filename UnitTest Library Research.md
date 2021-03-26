@@ -64,12 +64,19 @@ Quick 프레임워크 사용 방법
 - Then = it
 - 초기화 블록: beforeEach
 
+`
 import Quick
+`
 
 class에는 QuickSpec 상속
 
+`
 class NimbleQuickTests: QuickSpec {
+`
+
 spec()이라는 함수 override
+
+`
 class NimbleQuickTests: QuickSpec {
     override func spec() {
     }
@@ -90,3 +97,4 @@ Then - it
                 it("값이 잘 변환되었는지 테스트") { // Then
                     expect(myModule.result).to(equal("****"))
                 }
+`
