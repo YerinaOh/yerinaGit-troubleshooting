@@ -109,3 +109,6 @@ Then - it
    expect(myModule.result).to(equal("****"))
   }
 `
+
+Quick& Nimble 예제-
+https://medium.com/inloopx/tdd-using-quick-nimble-244b14b09e3d
