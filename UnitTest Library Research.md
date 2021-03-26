@@ -95,13 +95,11 @@ Given = describe
 
 When - context
 
-
 `
-            context("텍스트필드에 입력되면, convert된다") { // When
-                beforeEach {
-                    myModule.starPrint(number: 5)
-                }
-
+ context("텍스트필드에 입력되면, convert된다") { // When
+ beforeEach {
+   myModule.starPrint(number: 5)
+  }
 `
 
 Then - it
