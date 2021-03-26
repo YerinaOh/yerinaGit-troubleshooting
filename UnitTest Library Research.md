@@ -38,9 +38,55 @@ func testExample() throws {
 3. 다양한 assertion 제공
 
 🚀 toEventually, toEventuallyNot - Async한 테스트 가능
+
 🚀 type / class 형에 관한 테스트
+
 🚀 true / false - nil 테스트
+
 🚀 timeout 테스트
 
+예시 참고- https://ios-development.tistory.com/m/338
 
 ## 2. Quick
+
+Swift 프레임워크
+
+개념: BDD (Behavior-Driven Development)를 위한 프레임워크
+
+Quick은 desciription과 함께 클로저로 블럭단위 묶음으로 코딩하게끔 하여 가독성 상승을 위해 사용
+
+given(시나리오 정의)-when(시나리오 조건)-then(시나리오를 완료했을 때 보장되는 결과 명시)
+Quick 프레임워크 사용 방법
+
+클로저 블록 단위 Given, When, Then 구성
+- Given = describe
+- When = context
+- Then = it
+- 초기화 블록: beforeEach
+
+import Quick
+
+class에는 QuickSpec 상속
+
+class NimbleQuickTests: QuickSpec {
+spec()이라는 함수 override
+class NimbleQuickTests: QuickSpec {
+    override func spec() {
+    }
+}
+Given = describe
+        describe("뷰가 로드되면") { // Given
+            var myModule: Converter!
+            beforeEach {
+                myModule = Converter()
+            }
+ 
+When - context
+            context("텍스트필드에 입력되면, convert된다") { // When
+                beforeEach {
+                    myModule.starPrint(number: 5)
+                }
+Then - it
+                it("값이 잘 변환되었는지 테스트") { // Then
+                    expect(myModule.result).to(equal("****"))
+                }
