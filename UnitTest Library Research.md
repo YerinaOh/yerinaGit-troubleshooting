@@ -4,7 +4,7 @@
 Nimble: "재빠른"
 Error document화
 
-특징 및 장점
+### 특징 및 장점
 1. XCTAssert 와는 달리 매번 사용자 임의 실패 메시지를 지정할 필요가 없다 
  
 XCTAssert에서 실패 메세지를 작성해주지 않으면,
@@ -81,19 +81,31 @@ class NimbleQuickTests: QuickSpec {
     override func spec() {
     }
 }
+`
+
 Given = describe
+
+`
         describe("뷰가 로드되면") { // Given
             var myModule: Converter!
             beforeEach {
                 myModule = Converter()
             }
- 
+ `
 When - context
+
+`
             context("텍스트필드에 입력되면, convert된다") { // When
                 beforeEach {
                     myModule.starPrint(number: 5)
                 }
+
+`
+
 Then - it
+
+`
+
                 it("값이 잘 변환되었는지 테스트") { // Then
                     expect(myModule.result).to(equal("****"))
                 }
