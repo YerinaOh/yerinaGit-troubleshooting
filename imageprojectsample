@@ -1,0 +1,155 @@
+class ViewController: UIViewController {
+
+    private var viewModel = ImageViewModel()
+    
+    @IBOutlet weak var tvImages: UITableView!
+    
+    @IBOutlet weak var searchBarView: UISearchBar!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        viewModel.initial()
+    }
+}
+
+extension ViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.getTableViewCellCount()
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ImageTableViewCell") as? ImageTableViewCell else {
+            fatalError()
+        }
+    
+        Task {
+            let strr = viewModel.getTableViewCellImageData(index: indexPath.row)
+            
+            if let cachedImage = ImageCacheManager.shared.imageCaches.object(forKey: strr as AnyObject) {
+                cell.ivImage.image = cachedImage
+            } else {
+                await cell.loadImage(urlStr: strr)
+            }
+        }
+      //  cell.ivImage.image = UIImage(systemName: testDatas[indexPath.row])
+        
+        return cell
+    }
+}
+
+extension ViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchText.isEmpty {
+            viewModel.initial()
+        } else {
+            viewModel.testDatas = viewModel.initialDatas.filter({ $0.contains(searchText) })
+        }
+        tvImages.reloadData()
+    }
+}
+
+class ImageCacheManager {
+    static let shared: ImageCacheManager = ImageCacheManager()
+    lazy var imageCaches: NSCache<AnyObject, UIImage> = NSCache()
+}
+
+
+class ViewModel: ObservableObject {
+    @Published var displayedImageURLs: [String] = []
+    private var allImageURLs = [
+        "https://example.com/image1.jpg",
+        "https://example.com/image2.jpg",
+        "https://example.com/image3.jpg"
+    ]
+
+    private var cancellables = Set<AnyCancellable>()
+    private let searchTextSubject = PassthroughSubject<String, Never>()
+
+    init() {
+        searchTextSubject
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .sink { [weak self] searchText in
+                self?.fetchImages(for: searchText)
+            }
+            .store(in: &cancellables)
+    }
+
+    func searchTextDidChange(_ searchText: String) {
+        searchTextSubject.send(searchText)
+    }
+
+    func fetchImages(for searchText: String) {
+        if searchText.isEmpty {
+            displayedImageURLs = allImageURLs
+        } else {
+            displayedImageURLs = allImageURLs.filter { $0.contains(searchText) }
+        }
+    }
+
+    func loadImage(for url: String) -> AnyPublisher<UIImage?, Never> {
+        URLSession.shared.dataTaskPublisher(for: URL(string: url)!)
+            .map { UIImage(data: $0.data) }
+            .replaceError(with: nil)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+}
+
+import Combine
+
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
+
+    private var viewModel = ViewModel()
+    private var cancellables = Set<AnyCancellable>()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        tableView.delegate = self
+        tableView.dataSource = self
+        searchBar.delegate = self
+
+        viewModel.$displayedImageURLs
+            .sink { [weak self] _ in
+                self?.tableView.reloadData()
+            }
+            .store(in: &cancellables)
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.displayedImageURLs.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! CustomTableViewCell
+        let imageURL = viewModel.displayedImageURLs[indexPath.row]
+
+        viewModel.loadImage(for: imageURL)
+            .sink { image in
+                if let image = image {
+                    cell.customImageView.image = image
+                }
+            }
+            .store(in: &cell.cancellables)
+
+        return cell
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        viewModel.fetchImages(for: searchText)
+    }
+}
+
+class CustomTableViewCell: UITableViewCell {
+    @IBOutlet weak var customImageView: UIImageView!
+    var cancellables = Set<AnyCancellable>()
+}
