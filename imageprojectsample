@@ -1,3 +1,35 @@
+class ImageTableViewCell: UITableViewCell {
+
+    @IBOutlet weak var ivImage: UIImageView!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+    }
+
+    func loadImage(urlStr: String) async {
+        if let url = URL(string: urlStr) {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                if let imageData = UIImage(data: data) {
+                    ImageCacheManager.shared.imageCaches.setObject(imageData, forKey: urlStr as AnyObject)
+                    
+                    DispatchQueue.main.async {
+                        self.ivImage.image = imageData
+                    }
+                }
+            } catch {
+                print("Failed to load image: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    override func prepareForReuse() {
+        ivImage.image = nil
+    }
+}
+
+
 class ViewController: UIViewController {
 
     private var viewModel = ImageViewModel()
